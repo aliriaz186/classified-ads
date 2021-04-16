@@ -29,6 +29,13 @@
                         <a  href="{{url('add-classified')}}" style="background: #383f44;color: white;float: right" class="btn btn-secondary">Post New Classified</a>
                     </div><br>
                     <h3 style="color: white;">Category : {{$classified->category}}</h3><br>
+                    @if(!empty($classified->image))
+                        <a target="_blank" href="{{url('/get-classified-photo')}}/{{$classified->id}}">
+                            <img src="{{url('/get-classified-photo')}}/{{$classified->id}}" style="height: 300px;width: 300px" alt="">
+                        </a>
+                    @endif
+                        <br>
+                    <br>
 
                     <p>{{$classified->description}}</p><br>
                     <p>Phone : <a style="color: white" href="tel:{{$classified->phone ?? ''}}">{{$classified->phone ?? ''}}</a></p>

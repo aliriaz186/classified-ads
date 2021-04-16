@@ -26,6 +26,13 @@
                     <div style="margin-top: 10px">
                         <a  href="{{url('add-events')}}" style="background: #383f44;color: white;float: right" class="btn btn-secondary">Post New Event</a>
                     </div><br>
+                    @if(!empty($event->image))
+                        <a target="_blank" href="{{url('/get-event-photo')}}/{{$event->id}}">
+                            <img src="{{url('/get-event-photo')}}/{{$event->id}}" style="height: 300px;width: 300px" alt="">
+                        </a>
+                    @endif
+                    <br>
+                    <br>
                     <p>{{$event->description}}</p><br>
                     <p>Phone : <a style="color: white" href="tel:{{$event->phone ?? ''}}">{{$event->phone ?? ''}}</a></p>
                     <p>Email : <a style="color: white" href="mailto:{{$event->email ?? ''}}">{{$event->email ?? ''}}</a></p>
