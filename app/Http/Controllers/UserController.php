@@ -11,10 +11,12 @@ use App\EventComment;
 use App\Eventview;
 use App\Http\Controllers\Controller;
 use App\PaymentHistory;
+use App\UserLanguage;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Session;
+use services\email_messages\ForgotPasswordMessage;
 use services\email_messages\InvitationMessageBody;
 use services\email_services\EmailAddress;
 use services\email_services\EmailBody;
@@ -220,6 +222,9 @@ class UserController extends Controller
 
     public function userpostSignup(Request $request){
         try {
+            if (empty($request->terms)){
+                return redirect()->back()->withErrors("Please accept the term and conditions to continue");
+            }
             if (!User::where('email', $request->email)->exists()){
                 if ($request->password != $request->conpassword){
                     return redirect()->back()->withErrors("Password mismatch!");
@@ -228,12 +233,42 @@ class UserController extends Controller
                     return redirect()->back()->withErrors("Password must contains 5 characters atleast!");
                 }
                 $user = new User();
+                $user->name = $request->name;
                 $user->email = $request->email;
                 $user->password = md5($request->password);
+                if (empty($request->subscribe)){
+                    $user->subscribe = 0;
+                }else{
+                    $user->subscribe = 1;
+                }
                 $user->save();
+
+                $languages = $request->language;
+                $flag = false;
+                if (!empty($languages)){
+                    foreach ($languages as $language){
+                        if ($language == 'All'){
+                            $flag = true;
+                            break;
+                        }
+                        $userLang = new UserLanguage();
+                        $userLang->language = $language;
+                        $userLang->user_id = $user->id;
+                        $userLang->save();
+                    }
+                }
+
+                if ($flag == true || empty($languages)){
+                    $allLanguages = ['Hindi','Telugu','Tamil','Kannada','Malayalam'];
+                    foreach ($allLanguages as $item){
+                        $userLang = new UserLanguage();
+                        $userLang->language = $item;
+                        $userLang->user_id = $user->id;
+                        $userLang->save();
+                    }
+                }
+
                 Session::put('userId', $user->id);
-
-
 //                $subject = new SendEmailService(new EmailSubject("Your account has been created on Community"));
 //                $mailTo = new EmailAddress($user->email);
 //                $invitationMessage = new InvitationMessageBody();
@@ -247,7 +282,7 @@ class UserController extends Controller
                 return redirect()->back()->withErrors("Email Already Exists!");
             }
         }catch (\Exception $exception){
-            return redirect()->back()->withErrors("Server Error! Please try again!");
+            return redirect()->back()->withErrors($exception->getMessage());
 
         }
 
@@ -255,6 +290,63 @@ class UserController extends Controller
 
     public function userLogin(){
         return view('user-login');
+    }
+
+    public function forgotPassword(){
+        return view('forgot-password');
+    }
+
+    public function sendresetpasswordlink(Request $request){
+        if (!User::where('email', $request->email)->exists()){
+            return redirect()->back()->withErrors("Email not Exists!");
+        }
+        try {
+            $subject = new SendEmailService(new EmailSubject("Reset Password Link from " . env('APP_NAME')));
+            $mailTo = new EmailAddress($request->email);
+            $invitationMessage = new ForgotPasswordMessage();
+            $token = JWT::encode($request->email, 'Secret-2021');
+            $emailBody = $invitationMessage->invitationMessageBody($token);
+            $body = new EmailBody($emailBody);
+            $emailMessage = new EmailMessage($subject->getEmailSubject(), $mailTo, $body);
+            $sendEmail = new EmailSender(new PhpMail(new MailConf("smtp.gmail.com", "admin@dispatch.com", "secret-2021")));
+            $result = $sendEmail->send($emailMessage);
+            session()->flash('msg', 'Link Sent Successfully! Please check your inbox.');
+            return redirect()->back();
+        }catch (\Exception $exception){
+            return redirect()->back()->withErrors($exception->getMessage());
+
+        }
+
+    }
+
+
+    public function resetpasswordBackend(Request $request){
+        if (!User::where('email', $request->email)->exists()){
+            return redirect()->back()->withErrors("Email not Exists!");
+        }
+        if ($request->password != $request->confirmpassword){
+            return redirect()->back()->withErrors("Password Mismatched!");
+
+        }
+        try {
+            $user = User::where('email', $request->email)->first();
+            $user->password = md5($request->password);
+            $user->update();
+            session()->flash('msg', 'Password Updated! Please login now!');
+            return redirect('user-login');
+        }catch (\Exception $exception){
+            return redirect()->back()->withErrors($exception->getMessage());
+
+        }
+
+    }
+
+    public function resetPassword($token){
+        $token = JWT::decode($token, 'Secret-2021', array('HS256'));
+        if (empty($token)){
+            return json_encode("Access Denied");
+        }
+        return view('reset-password')->with(['email' => $token]);
     }
 
     public function userSignup(){

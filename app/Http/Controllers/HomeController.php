@@ -16,6 +16,7 @@ use App\Eventview;
 use App\PaymentHistory;
 use App\Staff;
 use App\User;
+use App\UserLanguage;
 use App\WordMeaning;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
@@ -418,7 +419,12 @@ class HomeController extends Controller
 
     public function myProfile(){
         $user = User::where('id',Session::get('userId'))->first();
-        return view('my-profile')->with(['user' => $user]);
+        $userLang = UserLanguage::where('user_id', $user->id)->get();
+        $userLanguages = [];
+        foreach ($userLang as $item){
+            array_push($userLanguages, $item->language);
+        }
+        return view('my-profile')->with(['user' => $user, 'userLanguages' => $userLanguages]);
     }
 
     public function updateprofile(Request $request){
@@ -428,7 +434,46 @@ class HomeController extends Controller
             if (!empty($request->password)){
                 $user->password = md5($request->password);
             }
+            if (empty($request->subscribe)){
+                $user->subscribe = 0;
+            }else{
+                $user->subscribe = 1;
+            }
             $user->update();
+
+            $userLangList = UserLanguage::where('user_id', $user->id)->get();
+            foreach ($userLangList as $item){
+                $item->delete();
+            }
+
+            $languages = $request->language;
+            $flag = false;
+            if (!empty($languages)){
+                foreach ($languages as $language){
+                    if ($language == 'All'){
+                        $flag = true;
+                        break;
+                    }
+                    $userLang = new UserLanguage();
+                    $userLang->language = $language;
+                    $userLang->user_id = $user->id;
+                    $userLang->save();
+                }
+            }
+
+//            $userLangList = UserLanguage::where('user_id', $user->id)->get();
+//            foreach ($userLangList as $item){
+//                $item->delete();
+//            }
+            if ($flag == true || empty($languages)){
+                $allLanguages = ['Hindi','Telugu','Tamil','Kannada','Malayalam'];
+                foreach ($allLanguages as $item){
+                    $userLang = new UserLanguage();
+                    $userLang->language = $item;
+                    $userLang->user_id = $user->id;
+                    $userLang->save();
+                }
+            }
             session()->flash('msg', 'Profile Updated Successfully!');
             return redirect('my-profile');
         }catch (\Exception $exception){

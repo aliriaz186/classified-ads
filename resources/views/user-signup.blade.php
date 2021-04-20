@@ -26,6 +26,9 @@
                         @csrf
                         <div class="row" style="margin-top: 30px">
                             <div class="col-md-12">
+                                <input  type="text" class="form-control" name="name" placeholder="Name" required>
+                            </div>
+                            <div class="col-md-12" style="margin-top: 10px">
                                 <input  type="email" class="form-control" name="email" placeholder="Email" required>
                             </div>
                             <div class="col-md-12" style="margin-top: 10px">
@@ -33,6 +36,21 @@
                             </div>
                             <div class="col-md-12" style="margin-top: 10px">
                                 <input type="password" class="form-control" placeholder="confirm password" name="conpassword" required>
+                            </div>
+                            <div class="col-md-12" style="margin-top: 10px">
+                                <label style="color: white">Select languages you can speak or understand</label><br>
+                                <input type="checkbox" name="language[]" value="All"> <span style="color: white">All</span>
+                                <input type="checkbox" name="language[]" value="Hindi" style="margin-left: 8px"> <span style="color: white">Hindi</span>
+                                <input type="checkbox" name="language[]" value="Telugu" style="margin-left: 8px"> <span style="color: white">Telugu</span>
+                                <input type="checkbox" name="language[]" value="Tamil" style="margin-left: 8px"> <span style="color: white">Tamil</span>
+                                <input type="checkbox" name="language[]" value="Kannada" style="margin-left: 8px"> <span style="color: white">Kannada</span>
+                                <input type="checkbox" name="language[]" value="Malayalam" style="margin-left: 8px"> <span style="color: white">Malayalam</span>
+                            </div>
+                            <div class="col-md-12" style="margin-top: 20px">
+                                <input type="checkbox" name="subscribe[]" value="subscribe"> <span style="color: white">Subscribe to News Letter and email notifications</span>
+                            </div>
+                            <div class="col-md-12" style="margin-top: 20px">
+                                <input type="checkbox" name="terms[]" value="subscribe"> <span style="color: white">I agree to the <a href="#" style="color: white;text-decoration: underline">terms and conditions</a></span>
                             </div>
                             <div class="col-md-12" style="margin-top: 20px">
                                 <button class="btn btn-primary">SIGNUP</button>

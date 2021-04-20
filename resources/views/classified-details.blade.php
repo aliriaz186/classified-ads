@@ -59,7 +59,7 @@
                                     </div>
                                 </form>
                                 @else
-                                    <div>Please <a style="color: white;text-decoration: underline" href="{{url('user-login')}}">login</a> to your post comments</div>
+                                    <div>Please <a style="color: white;text-decoration: underline" href="{{url('user-login')}}">login</a> or <a style="color: white;text-decoration: underline" href="{{url('user-signup')}}">register</a> to post comments</div>
                                 @endif
                                 <br>
                                 <br>
@@ -78,31 +78,36 @@
                         </div>
                         <div class="col-md-6">
                             <h3 style="color: white;text-align: center">Email to Advertiser</h3>
-                            <div>
-                                <form action="{{url('send-message-to-advertiser')}}" method="post">
-                                    @csrf
-                                    <div>
-                                        <input type="hidden" name="classified_id" value="{{$classified->id ?? ''}}">
-                                        <label>Name</label><br>
-                                        <input type="text" name="name" class="form-control" required>
-                                    </div><br>
-                                    <div>
-                                        <label>Email</label><br>
-                                        <input type="text" name="email" class="form-control" required>
-                                    </div><br>
-                                    <div>
-                                        <label>Phone</label><br>
-                                        <input type="text" name="phone" class="form-control" required>
-                                    </div><br>
-                                    <div>
-                                        <label>Message</label><br>
-                                        <textarea name="message" class="form-control" required></textarea>
-                                    </div><br>
-                                    <div>
-                                       <button class="btn btn-secondary">Submit</button>
-                                    </div>
-                                </form>
-                            </div>
+                            @if(\Illuminate\Support\Facades\Session::has('userId'))
+                                <div>
+                                    <form action="{{url('send-message-to-advertiser')}}" method="post">
+                                        @csrf
+                                        <div>
+                                            <input type="hidden" name="classified_id" value="{{$classified->id ?? ''}}">
+                                            <label>Name</label><br>
+                                            <input type="text" name="name" class="form-control" required>
+                                        </div><br>
+                                        <div>
+                                            <label>Email</label><br>
+                                            <input type="text" name="email" class="form-control" required>
+                                        </div><br>
+                                        <div>
+                                            <label>Phone</label><br>
+                                            <input type="text" name="phone" class="form-control" required>
+                                        </div><br>
+                                        <div>
+                                            <label>Message</label><br>
+                                            <textarea name="message" class="form-control" required></textarea>
+                                        </div><br>
+                                        <div>
+                                            <button class="btn btn-secondary">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            @else
+                                <div>Please <a style="color: white;text-decoration: underline" href="{{url('user-login')}}">login</a> or <a style="color: white;text-decoration: underline" href="{{url('user-signup')}}">register</a> to email the Advertiser</div>
+                            @endif
+
 
                         </div>
                     </div>

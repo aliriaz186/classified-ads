@@ -118,6 +118,12 @@
                                 <span>My Events</span>
                             </a>
                         </li>
+                        <li class="" style="border: 1px solid white;border-bottom: 0px;padding: 5px;font-size: 15px">
+                            <a href="{{url('')}}/my-profile">
+{{--                                <i class="fa fa-user"></i>--}}
+                                <span>My Profile</span>
+                            </a>
+                        </li>
                         <li class="" style="border: 1px solid white;padding: 5px;font-size: 15px">
                             <a href="{{ route('logout-user') }}">
                                 <span>Logout</span>

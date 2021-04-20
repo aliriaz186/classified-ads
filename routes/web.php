@@ -28,10 +28,14 @@ Route::get('/events', "UserController@events");
 Route::get('/classified-by-category/{id}', "UserController@classifiedByCategory");
 Route::get('/classified-details/{id}', "UserController@classifiedDetails");
 Route::get('/event-details/{id}', "UserController@eventDetails");
+Route::get('/forgot-password', "UserController@forgotPassword");
+Route::get('/reset-password/{token}', "UserController@resetPassword");
 Route::post('/send-message-to-advertiser', "HomeController@sendMessageToAdvertiser");
+Route::post('/sendresetpasswordlink', "UserController@sendresetpasswordlink");
+Route::post('/resetpassword', "UserController@resetpasswordBackend");
 
-
-
+Route::post('/updateprofile', "HomeController@updateprofile")->middleware('dashboard');
+Route::get('/my-profile', "HomeController@myProfile")->middleware('dashboard');
 Route::get('/home', "HomeController@showDashboard")->middleware('dashboard');
 Route::get('/my-classifieds', "HomeController@myClassified")->middleware('dashboard');
 Route::get('/add-classified', "HomeController@addClassified")->middleware('dashboard');
@@ -82,7 +86,6 @@ Route::get('/activate-subscription/{id}', "HomeController@activateSubscription")
 Route::get('/contact-users', "HomeController@contactUsers")->middleware('dashboard');
 Route::get('/open-chat/{userId}', "HomeController@openChat")->middleware('dashboard');
 Route::post('/save-dream', "HomeController@saveDream")->middleware('dashboard');
-Route::post('/updateprofile', "HomeController@updateprofile")->middleware('dashboard');
 Route::post('/updatecarddetails', "HomeController@updatecarddetails")->middleware('dashboard');
 Route::post('/startchat', "HomeController@startchat")->middleware('dashboard');
 Route::post('/send-message', "HomeController@sendMessage")->middleware('dashboard');

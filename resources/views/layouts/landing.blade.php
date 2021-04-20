@@ -80,7 +80,7 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav ml-auto">
                     <!-- Menu item 1 Demos-->
-                    <li class="nav-item {{\Request::is('/') ? 'active' : ''}}" > <a class="nav-link " href="{{url('')}}" id="demosMenu"  aria-haspopup="true" aria-expanded="false">Home</a></li>
+                    <li class="nav-item {{\Request::is('/') ? 'active' : ''}}"> <a class="nav-link " href="{{url('')}}" id="demosMenu"  aria-haspopup="true" aria-expanded="false">Home</a></li>
                     <li class="nav-item {{\Request::is('classified') ? 'active' : ''}}"> <a class="nav-link " href="{{url('classified')}}" id="demosMenu"  aria-haspopup="true" aria-expanded="false">Classified</a></li>
                     <li class="nav-item {{\Request::is('events') ? 'active' : ''}}"> <a class="nav-link " href="{{url('events')}}" id="demosMenu"  aria-haspopup="true" aria-expanded="false">Events</a></li>
 
@@ -92,8 +92,7 @@
             <!-- Header Extras Start-->
             <div class="navbar-nav">
                 @if(\Illuminate\Support\Facades\Session::has('userId'))
-                    <div class="nav-item border-0 d-none d-lg-inline-block align-self-center" style="margin-left: 50px"> <a href="{{url('home')}}" class=" btn btn-sm btn-grad text-white mb-0">MY ACCOUNT</a> </div>
-
+                    <div class="nav-item border-0 d-none d-lg-inline-block align-self-center" style="margin-left: 50px"> <a href="{{url('home')}}" class=" btn btn-sm btn-grad text-white mb-0">{{\App\User::where('id', \Illuminate\Support\Facades\Session::get('userId'))->first()['name'] ?? 'USER'}}'s ACCOUNT</a> </div>
                 @else
                     <div class="nav-item border-0 d-none d-lg-inline-block align-self-center" style="margin-left: 50px"> <a href="{{url('user-login')}}" class=" btn btn-sm btn-grad text-white mb-0">LOGIN</a> </div>
                     <div class="nav-item border-0 d-none d-lg-inline-block align-self-center" style="margin-left: 10px"> <a href="{{url('user-signup')}}" class=" btn btn-sm btn-grad text-white mb-0">REGISTER</a> </div>
