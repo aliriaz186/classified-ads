@@ -1,13 +1,14 @@
-@extends('layouts.app')
+@extends('layouts.landingapp')
 @section('content')
 
     <div class="p-4 ml-3"  style="margin-left: 20px">
         <div class="row">
             <div class="col-md-7 mt-2">
-                <h2>My Profile</h2>
+
             </div>
         </div>
     </div>
+    <h2 style="text-align: center">My Profile</h2>
 
     <div class="px-5"  style="margin-left: 20px">
         @if($errors->any())

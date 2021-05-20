@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.landingapp')
 @section('content')
 
     <div class="p-5 ml-3"  style="margin-left: 20px">

@@ -18,6 +18,7 @@ class CreateEventCommentsTable extends Migration
             $table->string('user_id');
             $table->string('event_id');
             $table->string('comment');
+            $table->string('rating')->default(0);
             $table->timestamps();
         });
     }

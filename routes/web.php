@@ -23,11 +23,17 @@ Route::post('userlogin', "UserController@userpostlogin");
 Route::post('usersignup', "UserController@userpostSignup");
 Route::get('/get-classified-photo/{id}', "HomeController@getClassifiedPhoto");
 Route::get('/get-event-photo/{id}', "HomeController@getEventPhoto");
+Route::get('/get-movie-photo/{id}', "HomeController@getMoviePhoto");
+Route::get('/get-category-photo/{id}', "HomeController@getCategoryPhoto");
 Route::get('/classified', "UserController@classified");
 Route::get('/events', "UserController@events");
+Route::get('/movies', "UserController@movies");
 Route::get('/classified-by-category/{id}', "UserController@classifiedByCategory");
 Route::get('/classified-details/{id}', "UserController@classifiedDetails");
 Route::get('/event-details/{id}', "UserController@eventDetails");
+Route::get('/movie-details/{id}', "UserController@movieDetails");
+Route::get('/forum', "UserController@forum");
+Route::get('/topic/{id}', "UserController@topic");
 Route::get('/forgot-password', "UserController@forgotPassword");
 Route::get('/reset-password/{token}', "UserController@resetPassword");
 Route::post('/send-message-to-advertiser', "HomeController@sendMessageToAdvertiser");
@@ -38,6 +44,7 @@ Route::post('/updateprofile', "HomeController@updateprofile")->middleware('dashb
 Route::get('/my-profile', "HomeController@myProfile")->middleware('dashboard');
 Route::get('/home', "HomeController@showDashboard")->middleware('dashboard');
 Route::get('/my-classifieds', "HomeController@myClassified")->middleware('dashboard');
+Route::get('/my-movies', "HomeController@myMovies")->middleware('dashboard');
 Route::get('/add-classified', "HomeController@addClassified")->middleware('dashboard');
 Route::get('/delete-classified/{id}', "HomeController@deleteClassified")->middleware('dashboard');
 Route::get('/edit-classified/{id}', "HomeController@editClassified")->middleware('dashboard');
@@ -48,11 +55,20 @@ Route::post('/post-classified-comment', "HomeController@postClassifiedComment")-
 
 Route::get('/my-events', "HomeController@myEvents")->middleware('dashboard');
 Route::get('/add-events', "HomeController@addEvent")->middleware('dashboard');
+Route::get('/add-topic', "HomeController@addTopic")->middleware('dashboard');
+Route::get('/add-movie', "HomeController@addMovie")->middleware('dashboard');
 Route::get('/delete-event/{id}', "HomeController@deleteEvent")->middleware('dashboard');
+Route::get('/delete-movie/{id}', "HomeController@deleteMovie")->middleware('dashboard');
 Route::get('/edit-event/{id}', "HomeController@editEvent")->middleware('dashboard');
+Route::get('/edit-movie/{id}', "HomeController@editMovie")->middleware('dashboard');
 Route::post('/save-event', "HomeController@saveEvent")->middleware('dashboard');
+Route::post('/save-movie', "HomeController@saveMovie")->middleware('dashboard');
+Route::post('/save-topic', "HomeController@saveTopic")->middleware('dashboard');
 Route::post('/update-event', "HomeController@updateEvent")->middleware('dashboard');
+Route::post('/update-movie', "HomeController@updateMovie")->middleware('dashboard');
 Route::post('/post-event-comment', "HomeController@postEventComment")->middleware('dashboard');
+Route::post('/post-forum-reply', "HomeController@postForumReply")->middleware('dashboard');
+Route::post('/post-movie-comment', "HomeController@postMovieComment")->middleware('dashboard');
 
 
 

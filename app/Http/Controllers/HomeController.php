@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Admin;
 use App\Adview;
+use App\Category;
 use App\Chat;
 use App\ChatParent;
 use App\Clasified;
@@ -13,6 +14,11 @@ use App\dreams;
 use App\Event;
 use App\EventComment;
 use App\Eventview;
+use App\Forum;
+use App\ForumReplies;
+use App\Movie;
+use App\MovieComment;
+use App\MovieView;
 use App\PaymentHistory;
 use App\Staff;
 use App\User;
@@ -62,8 +68,15 @@ class HomeController extends Controller
         foreach ($classifieds as $item){
             $item->adViewed = Adview::where('classified_id', $item->id)->count();
         }
-
         return view('my-classifieds')->with(['classifieds' => $classifieds]);
+    }
+
+    public function myMovies(){
+        $movies = Movie::where('user_id', Session::get('userId'))->latest()->get();
+        foreach ($movies as $item){
+            $item->adViewed = MovieView::where('movie_id', $item->id)->count();
+        }
+        return view('my-movies')->with(['movies' => $movies]);
     }
 
     public function deleteClassified($id){
@@ -80,12 +93,10 @@ class HomeController extends Controller
     public function editClassified($id){
         try {
             $classified = Clasified::where('id', $id)->first();
-
             return view('edit-classifieds')->with(['classified' => $classified]);
         }catch (\Exception $exception){
             return redirect()->back()->withErrors($exception->getMessage());
         }
-
     }
 
     public function getClassifiedPhoto($id){
@@ -95,6 +106,15 @@ class HomeController extends Controller
             header('Content-Type:' . $type);
             header('Content-Length: ' . filesize($file));
             return readfile($file);
+    }
+
+    public function getCategoryPhoto($id){
+        $img = Category::where('id', $id)->first();
+        $file =  base_path('/data') . '/categories/' . $img->logo;
+        $type = mime_content_type($file);
+        header('Content-Type:' . $type);
+        header('Content-Length: ' . filesize($file));
+        return readfile($file);
     }
 
     public function saveClassified(Request $request){
@@ -128,6 +148,7 @@ class HomeController extends Controller
             $classified = new ClassifiedComment();
             $classified->user_id = Session::get('userId');
             $classified->comment = $request->comment;
+            $classified->rating = $request->rating;
             $classified->classified_id = $request->classified_id;
             $classified->save();
             session()->flash('msg', 'Comment Posted Successfully!');
@@ -144,9 +165,41 @@ class HomeController extends Controller
             $comment->user_id = Session::get('userId');
             $comment->comment = $request->comment;
             $comment->event_id = $request->event_id;
+            $comment->rating = $request->rating;
             $comment->save();
             session()->flash('msg', 'Comment Posted Successfully!');
             return redirect('event-details' . '/' . $request->event_id);
+        }catch (\Exception $exception){
+            return redirect()->back()->withErrors($exception->getMessage());
+        }
+
+    }
+
+    public function postForumReply(Request $request){
+        try {
+            $reply = new ForumReplies();
+            $reply->user_id = Session::get('userId');
+            $reply->reply = $request->reply;
+            $reply->forum_id = $request->forum_id;
+            $reply->save();
+            session()->flash('msg', 'Reply Posted Successfully!');
+            return redirect('topic' . '/' . $request->forum_id);
+        }catch (\Exception $exception){
+            return redirect()->back()->withErrors($exception->getMessage());
+        }
+
+    }
+
+    public function postMovieComment(Request $request){
+        try {
+            $comment = new MovieComment();
+            $comment->user_id = Session::get('userId');
+            $comment->comment = $request->comment;
+            $comment->movie_id = $request->movie_id;
+            $comment->rating = $request->rating;
+            $comment->save();
+            session()->flash('msg', 'Comment Posted Successfully!');
+            return redirect('movie-details' . '/' . $request->movie_id);
         }catch (\Exception $exception){
             return redirect()->back()->withErrors($exception->getMessage());
         }
@@ -227,6 +280,17 @@ class HomeController extends Controller
 
     }
 
+    public function deleteMovie($id){
+        try {
+            $dreams = Movie::where('id', $id)->first()->delete();
+            session()->flash('msg', 'Movie deleted Successfully!');
+            return redirect('my-movies');
+        }catch (\Exception $exception){
+            return redirect()->back()->withErrors($exception->getMessage());
+        }
+
+    }
+
     public function editEvent($id){
         try {
             $event = Event::where('id', $id)->first();
@@ -238,9 +302,29 @@ class HomeController extends Controller
 
     }
 
+    public function editMovie($id){
+        try {
+            $movie = Movie::where('id', $id)->first();
+
+            return view('edit-movie')->with(['movie' => $movie]);
+        }catch (\Exception $exception){
+            return redirect()->back()->withErrors($exception->getMessage());
+        }
+
+    }
+
     public function getEventPhoto($id){
         $img = Event::where('id', $id)->first();
         $file =  base_path('/data') . '/event/' . $img->image;
+        $type = mime_content_type($file);
+        header('Content-Type:' . $type);
+        header('Content-Length: ' . filesize($file));
+        return readfile($file);
+    }
+
+    public function getMoviePhoto($id){
+        $img = Movie::where('id', $id)->first();
+        $file =  base_path('/data') . '/movie/' . $img->image;
         $type = mime_content_type($file);
         header('Content-Type:' . $type);
         header('Content-Length: ' . filesize($file));
@@ -272,6 +356,46 @@ class HomeController extends Controller
 
     }
 
+    public function saveMovie(Request $request){
+        try {
+            $event = new Movie();
+            $event->title = $request->title;
+            $event->description = $request->description;
+            $event->phone = $request->phone;
+            $event->user_id = Session::get('userId');
+
+            if ($request->hasfile('files')) {
+                $files = $request->file('files');
+                foreach ($files as $file){
+                    $name = time() . '.' . $file->getClientOriginalExtension();
+                    $file->move(base_path('/data') . '/movie/',  $name);
+                    $event->image = $name;
+                }
+            }
+            $event->save();
+            session()->flash('msg', 'Movie Posted Successfully!');
+            return redirect('my-movies');
+        }catch (\Exception $exception){
+            return redirect()->back()->withErrors($exception->getMessage());
+        }
+
+    }
+
+    public function saveTopic(Request $request){
+        try {
+            $forum = new Forum();
+            $forum->topic = $request->title;
+            $forum->description = $request->description;
+            $forum->user_id = Session::get('userId');
+            $forum->save();
+            session()->flash('msg', 'Topic Posted Successfully!');
+            return redirect('forum');
+        }catch (\Exception $exception){
+            return redirect()->back()->withErrors($exception->getMessage());
+        }
+
+    }
+
 
     public function updateEvent(Request $request){
         try {
@@ -297,8 +421,40 @@ class HomeController extends Controller
 
     }
 
+    public function updateMovie(Request $request){
+        try {
+            $event = Movie::where('id', $request->id)->first();
+            $event->title = $request->title;
+            $event->description = $request->description;
+            $event->phone = $request->phone;
+
+            if ($request->hasfile('files')) {
+                $files = $request->file('files');
+                foreach ($files as $file){
+                    $name = time() . '.' . $file->getClientOriginalExtension();
+                    $file->move(base_path('/data') . '/movie/',  $name);
+                    $event->image = $name;
+                }
+            }
+            $event->update();
+            session()->flash('msg', 'Movie Updated Successfully!');
+            return redirect('my-movies');
+        }catch (\Exception $exception){
+            return redirect()->back()->withErrors($exception->getMessage());
+        }
+
+    }
+
     public function addEvent(){
         return view('add-events');
+    }
+
+    public function addTopic(){
+        return view('add-topic');
+    }
+
+    public function addMovie(){
+        return view('add-movie');
     }
 
 

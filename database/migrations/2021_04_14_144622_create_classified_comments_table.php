@@ -18,6 +18,7 @@ class CreateClassifiedCommentsTable extends Migration
             $table->string('user_id');
             $table->string('classified_id');
             $table->string('comment');
+            $table->string('rating')->default(0);
             $table->timestamps();
         });
     }

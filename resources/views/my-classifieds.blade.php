@@ -1,19 +1,21 @@
-@extends('layouts.app')
+@extends('layouts.landingapp')
 @section('content')
     <div class="p-4 ml-3"  style="margin-left: 20px">
         <div class="row">
-            <div class="col-md-7 mt-2">
+            <div class="col-md-7 mt-2" style="margin-left: 30px">
                 <h2>My Classifieds</h2>
             </div>
             <div class="col-md-5 mt-2 row">
-                <div style="float: right;margin-bottom: 10px">
-                    <a class="btn btn-success" style="font-size: 13px" href="{{url('/add-classified')}}">POST New Classified</a>
-                </div>
+
             </div>
         </div>
     </div>
 
-    <div class="px-5"  style="margin-left: 20px">
+
+    <div class="px-5"  style="margin-left: 20px;margin-bottom: 100px">
+        <div style="float: right;margin-bottom: 10px">
+            <a class="btn btn-success" style="font-size: 13px" href="{{url('/add-classified')}}">POST New Classified</a>
+        </div>
         @if($errors->any())
             <div class="alert alert-danger">
                 <h4 style="color: black;font-size: 14px">{{$errors->first()}}</h4>

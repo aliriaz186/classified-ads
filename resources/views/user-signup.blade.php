@@ -1,4 +1,4 @@
-@extends('layouts.landing')
+@extends('layouts.landingapp')
 @section('content')
     <style>
         .first-bg {
@@ -11,17 +11,18 @@
             padding: 35px;
         }
     </style>
-    <div class="first-bg">
 
-        <div style=";margin: 0 auto;max-width: 800px;margin-top: 100px;padding: 20px;background: rgb(45 52 58 / 65%);" class="circle">
-            <h2 class="textmain" style="color: white;text-align: center">SIGNUP</h2>
-            <div style="margin: 0 auto;max-width: 800px;margin-top: 50px;">
+    <section class="banner-part">
+        <div class="container">
+            <div class="banner-content">
                 <div style="margin: 0 auto;max-width: 500px">
                     @if($errors->any())
                         <div class="alert alert-danger">
                             <h4>{{$errors->first()}}</h4>
                         </div>
                     @endif
+                        <br>
+                        <h3 style="color: white">REGISTERATION</h3>
                     <form method="post" action="{{url('usersignup')}}">
                         @csrf
                         <div class="row" style="margin-top: 30px">
@@ -64,10 +65,19 @@
                     </form>
 
                 </div>
-
             </div>
         </div>
-    </div>
+    </section>
+{{--    <div class="first-bg">--}}
+
+{{--        <div style=";margin: 0 auto;max-width: 800px;margin-top: 100px;padding: 20px;background: rgb(45 52 58 / 65%);" class="circle">--}}
+{{--            <h2 class="textmain" style="color: white;text-align: center">SIGNUP</h2>--}}
+{{--            <div style="margin: 0 auto;max-width: 800px;margin-top: 50px;">--}}
+
+
+{{--            </div>--}}
+{{--        </div>--}}
+{{--    </div>--}}
 
 
 

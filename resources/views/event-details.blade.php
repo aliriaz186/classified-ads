@@ -1,82 +1,219 @@
-@extends('layouts.landing')
+@extends('layouts.landingapp')
 @section('content')
 
-    <div class="whiteBG pt80 pb60">
-        <div class="container space-2 space-3--lg">
-            <!-- Title -->
-            <div class="w-md-80 w-lg-60 text-center mx-md-auto mb-9">
-                <h2 class="h3">{{$event->title}}</h2>
-                <a href="{{url('')}}" style="color:#000;text-decoration: underline">Home</a> > <a href="{{url('events')}}" style="color:#000;text-decoration: underline">All Events</a>
-
-            </div>
-            <!-- End Title -->
-            @if($errors->any())
-                <div class="alert alert-danger">
-                    <h4 style="color: black;font-size: 14px">{{$errors->first()}}</h4>
-                </div>
-            @endif
-            @if(\Illuminate\Support\Facades\Session::has('msg'))
-                <div class="alert alert-success" style="margin-bottom: 0px!important;">
-                    <h4 style="color: black">{{\Illuminate\Support\Facades\Session::get("msg")}}</h4>
-                </div>
-            @endif
+    <link rel="stylesheet" href="{{url('')}}/newtheme/css/custom/rightbar-details.css">
+    <section class="single-banner">
+        <div class="container">
             <div class="row">
-                <div class="col-md-12" style="padding: 30px;background: #383f44;margin-left: 20px;margin-top: 20px;color: white">
-                    <p style="float: right">Ad Viewed : {{$adViewed ?? 0}} Times</p><br>
-                    <div style="margin-top: 10px">
-                        <a  href="{{url('add-events')}}" style="background: #383f44;color: white;float: right" class="btn btn-secondary">Post New Event</a>
-                    </div><br>
-                    @if(!empty($event->image))
-                        <a target="_blank" href="{{url('/get-event-photo')}}/{{$event->id}}">
-                            <img src="{{url('/get-event-photo')}}/{{$event->id}}" style="height: 300px;width: 300px" alt="">
-                        </a>
-                    @endif
-                    <br>
-                    <br>
-                    <p>{{$event->description}}</p><br>
-                    <p>Phone : <a style="color: white" href="tel:{{$event->phone ?? ''}}">{{$event->phone ?? ''}}</a></p>
-                    <p>Email : <a style="color: white" href="mailto:{{$event->email ?? ''}}">{{$event->email ?? ''}}</a></p>
-                    <br><p style="font-size: 12px;text-align: right">Posted on {{$event->created_at}}</p>
-                    <div class="row" style="margin-top: 40px">
-                        <div class="col-md-12" style="border-right: 1px solid white">
-                            <h3 style="color: white;text-align: center">Comments</h3>
-                            <div>
-                                @if(\Illuminate\Support\Facades\Session::has('userId'))
-                                    <form action="{{url('post-event-comment')}}" method="post">
-                                        @csrf
-                                        <div>
-                                            <label>Your Comment</label><br>
-                                            <input type="hidden" name="event_id" value="{{$event->id ?? ''}}">
-                                            <input type="text" name="comment" class="form-control" required>
-                                        </div><br>
-                                        <div>
-                                            <button class="btn btn-secondary">Send</button>
-                                        </div>
-                                    </form>
-                                @else
-                                    <div>Please <a style="color: white;text-decoration: underline" href="{{url('user-login')}}">login</a> to your post comments</div>
-                                @endif
-                                <br>
-                                <br>
-                                <div style="max-height: 400px;overflow-y: scroll;padding: 10px">
-                                    @foreach($event->comments as $item)
-                                        <div style="padding: 10px;border: 1px solid white;color: white;margin-top: 10px">
-                                            <h3 style="color: white">{{$item->comment}}</h3>
-                                            <p style=";font-size: 12px">Posted on {{$item->created_at}}</p>
-                                            <p style=";font-size: 12px">Posted by {{\App\User::where('id', $item->user_id)->first()['email']}}</p>
-
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                            </div>
-                        </div>
-
+                <div class="col-lg-12">
+                    <div class="single-content"><h2>{{$event->title}} details</h2>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{url('')}}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{{url('events')}}">All Events</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{$event->title}}</li>
+                        </ol>
                     </div>
                 </div>
             </div>
-            <br>
         </div>
-    </div>
+    </section>
+
+    <section class="ad-details-part">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    @if($errors->any())
+                        <div class="alert alert-danger">
+                            <h4 style="color: black;font-size: 14px">{{$errors->first()}}</h4>
+                        </div>
+                    @endif
+                    @if(\Illuminate\Support\Facades\Session::has('msg'))
+                        <div class="alert alert-success" style="margin-bottom: 0px!important;">
+                            <h4 style="color: black">{{\Illuminate\Support\Facades\Session::get("msg")}}</h4>
+                        </div>
+                    @endif
+                    <div class="ad-details-card">
+                        <div class="ad-details-breadcrumb">
+                            <ol class="breadcrumb">
+                                <li><span class="flat-badge sale">Event</span></li>
+                                {{--                                <li class="breadcrumb-item"><a href="#">Property</a></li>--}}
+                                {{--                                <li class="breadcrumb-item active" aria-current="page">house</li>--}}
+                            </ol>
+                        </div>
+                        <div class="ad-details-heading"><h2><a href="#">
+                                    {{$event->title}}
+                                </a></h2></div>
+                        <ul class="ad-details-meta">
+                            <li><a href="#"><i class="fas fa-eye"></i>
+                                    <p>Views<span>({{$adViewed ?? 0}})</span></p></a></li>
+                            <li><a href="#"><i class="fas fa-mouse"></i>
+                                    <p>click<span>({{$adViewed ?? 0}})</span></p></a></li>
+                            <li><a href="#"><i class="fas fa-star"></i>
+                                    <p>comments<span>({{count($event->comments)}})</span></p></a></li>
+                            {{--                            <li><a href="#"><i class="fas fa-heart"></i>--}}
+                            {{--                                    <p>bookmark<span>(15)</span></p></a></li>--}}
+                        </ul>
+                        <div class="ad-details-slider slider-arrow">
+                            <div><img src="{{url('/get-event-photo')}}/{{$event->id}}" alt="details"></div>
+                            {{--                            <div><img src="images/product/01.jpg" alt="details"></div>--}}
+                            {{--                            <div><img src="images/product/01.jpg" alt="details"></div>--}}
+                            {{--                            <div><img src="images/product/01.jpg" alt="details"></div>--}}
+                        </div>
+                        {{--                        <div class="ad-thumb-slider">--}}
+                        {{--                            <div><img src="{{url('/get-classified-photo')}}/{{$classified->id}}" alt="details"></div>--}}
+                        {{--                            <div><img src="images/product/01.jpg" alt="details"></div>--}}
+                        {{--                            <div><img src="images/product/01.jpg" alt="details"></div>--}}
+                        {{--                            <div><img src="images/product/01.jpg" alt="details"></div>--}}
+                        {{--                        </div>--}}
+                        <div class="ad-details-action">
+                            {{--                            <ul>--}}
+                            {{--                                <li>--}}
+                            {{--                                    <button type="button"><i class="fas fa-heart"></i><span>bookmark</span></button>--}}
+                            {{--                                </li>--}}
+                            {{--                                <li>--}}
+                            {{--                                    <button type="button"><i class="fas fa-exclamation-triangle"></i><span>report</span>--}}
+                            {{--                                    </button>--}}
+                            {{--                                </li>--}}
+                            {{--                                <li>--}}
+                            {{--                                    <button type="button"><i class="fas fa-share-alt"></i><span>share</span></button>--}}
+                            {{--                                </li>--}}
+                            {{--                            </ul>--}}
+                        </div>
+                    </div>
+                    <div class="ad-details-card">
+                        <div class="ad-details-title"><h5>Specification</h5></div>
+                        <div class="ad-details-specific">
+                            <ul>
+                                {{--                                <li><h6>price:</h6>--}}
+                                {{--                                    <p>$2,347</p></li>--}}
+                                {{--                                <li><h6>seller type:</h6>--}}
+                                {{--                                    <p>personal</p></li>--}}
+                                <li><h6>published:</h6>
+                                    <p>{{$event->created_at}}</p></li>
+                                {{--                                <li><h6>location:</h6>--}}
+                                {{--                                    <p>jalkuri, narayanganj</p></li>--}}
+                                <li><h6>category:</h6>
+                                    <p>Event</p></li>
+                                {{--                                <li><h6>condition:</h6>--}}
+                                {{--                                    <p>used</p></li>--}}
+                                {{--                                <li><h6>price type:</h6>--}}
+                                {{--                                    <p>negotiable</p></li>--}}
+                                {{--                                <li><h6>ad type:</h6>--}}
+                                {{--                                    <p>sales</p></li>--}}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ad-details-card">
+                        <div class="ad-details-title"><h5>description</h5></div>
+                        <div class="ad-details-descrip"><p>
+                                {{$event->description}}
+                            </p></div>
+                    </div>
+                    <div class="ad-details-card">
+                        <div class="ad-details-title"><h5>Comments ({{count($event->comments)}})</h5></div>
+                        <div class="ad-details-review">
+                            <ul class="review-list">
+
+                                @foreach($event->comments as $item)
+                                    <li class="review-item">
+                                        <div class="review">
+                                            <div class="review-head">
+                                                <div class="review-author">
+                                                    <div class="review-meta"><h6><a href="#">{{\App\User::where('id', $item->user_id)->first()['name']}} -</a><span>{{$item->created_at}}</span>
+                                                        </h6>
+                                                        <ul>
+                                                            @for($i=0;$i<(int)$item->rating;$i++)
+                                                                <li><i class="fas fa-star active"></i></li>
+                                                            @endfor
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="review-content"><p>
+                                                    {{ $item->comment}}
+                                                </p></div>
+                                        </div>
+                                    </li>
+                                @endforeach
+
+
+                            </ul>
+                            @if(\Illuminate\Support\Facades\Session::has('userId'))
+                                {{--                                <form >--}}
+
+                                {{--                                    <div>--}}
+                                {{--                                        <label>Your Comment</label><br>--}}
+                                {{--                                        <input type="text" name="comment" class="form-control" required>--}}
+                                {{--                                    </div><br>--}}
+                                {{--                                    <div>--}}
+                                {{--                                        <button class="btn btn-secondary">Send</button>--}}
+                                {{--                                    </div>--}}
+                                {{--                                </form>--}}
+                                <form class="ad-review-form" action="{{url('post-event-comment')}}" method="post">
+                                    @csrf
+                                    <input type="hidden" name="event_id" value="{{$event->id ?? ''}}">
+
+                                    <div class="star-rating"><input type="radio" value="5" name="rating" id="star-1"><label
+                                            for="star-1"></label><input type="radio" value="4" name="rating" id="star-2"><label
+                                            for="star-2"></label><input type="radio" value="3" name="rating" id="star-3"><label
+                                            for="star-3"></label><input type="radio" value="2" name="rating" id="star-4"><label
+                                            for="star-4"></label><input type="radio" value="1" name="rating" id="star-5"><label for="star-5"></label></div>
+                                    {{--                                    <div class="ad-review-form-grid">--}}
+                                    {{--                                        <div class="form-group"><input type="text" class="form-control" placeholder="Name">--}}
+                                    {{--                                        </div>--}}
+                                    {{--                                        <div class="form-group"><input type="email" class="form-control" placeholder="Email">--}}
+                                    {{--                                        </div>--}}
+                                    {{--                                        <div class="form-group"><select class="form-control custom-select">--}}
+                                    {{--                                                <option selected>Qoute</option>--}}
+                                    {{--                                                <option value="1">delivery system</option>--}}
+                                    {{--                                                <option value="2">product quality</option>--}}
+                                    {{--                                                <option value="3">payment issue</option>--}}
+                                    {{--                                            </select></div>--}}
+                                    {{--                                    </div>--}}
+                                    <div class="form-group"><textarea class="form-control" name="comment" placeholder="Describe your comment"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-inline"><i class="fas fa-tint"></i><span>Drop your review</span>
+                                    </button>
+                                </form>
+                            @else
+                                <div style="margin-top: 20px">Please <a style="color: blue;text-decoration: underline" href="{{url('user-login')}}">login</a> or <a style="color: blue;text-decoration: underline" href="{{url('user-signup')}}">register</a> to post comments</div>
+                            @endif
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="ad-details-price"><h5 style="font-size: 15px">{{$event->email}}</h5>
+                    </div>
+                    <button class="ad-details-number"><i class="fas fa-phone-alt"></i><span>{{$event->phone}}</span>
+                    </button>
+                    <div class="ad-details-card">
+                        <div class="ad-details-title"><h5>Ad</h5></div>
+                        <div class="ad-details-profile">
+                            <div>
+                                <img src="{{url('')}}/ad.jpg" style="width: 300px">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ad-details-card">
+                        <div class="ad-details-title"><h5>Ad</h5></div>
+                        <div class="ad-details-profile">
+                            <div>
+                                <img src="{{url('')}}/ad.jpg" style="width: 300px">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ad-details-card">
+                        <div class="ad-details-title"><h5>Ad</h5></div>
+                        <div class="ad-details-profile">
+                            <div>
+                                <img src="{{url('')}}/ad.jpg" style="width: 300px">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
 @endsection

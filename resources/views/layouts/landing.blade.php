@@ -5,28 +5,11 @@
     <title>Home</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-{{--    <link href="{{asset('bootstrap.min.css')}}" rel="stylesheet">--}}
-{{--    <link href="{{asset('css/stylesheet.css')}}" rel="stylesheet">--}}
-{{--    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">--}}
-{{--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">--}}
-{{--    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>--}}
-{{--    <script type="text/javascript" src="{{ \Illuminate\Support\Facades\URL::asset('bootstrap.min.js')}}"></script>--}}
-{{--    <script type="text/javascript" src="{{ \Illuminate\Support\Facades\URL::asset('jquery/3.5.1/jquery.min.js')}}"></script>--}}
-{{--    <script type="text/javascript" src="{{ \Illuminate\Support\Facades\URL::asset('bootstrap.min.js')}}"></script>--}}
-{{--    <script type="text/javascript" src="{{ \Illuminate\Support\Facades\URL::asset('popper/popper.min.js')}}"></script>--}}
-
     <link href="{{asset('theme')}}/css/style.css" type="text/css" rel="stylesheet" />
 
 
 </head>
 <body>
-{{--    <a href="{{url('')}}"> <h2 style="position:fixed;color: white">{{env('APP_NAME')}}</h2></a>--}}
-{{--    @if(\Illuminate\Support\Facades\Session::has('userId'))--}}
-{{--        <a class="href-color" href="{{url('home')}}" style="float: right;">Dashboard</a>--}}
-{{--    @else--}}
-{{--        <a class="href-color" href="{{url('user-signup')}}" style="float: right;margin-left: 30px">Register</a>--}}
-{{--        <a class="href-color" href="{{url('user-login')}}" style="float: right;margin-left: 30px">Login</a>--}}
-{{--    @endif--}}
 <header class="header-static navbar-sticky navbar-light shadow">
     <!-- Search -->
     <div class="top-search collapse bg-light gradbtnbox" id="search-open" data-parent="#search">
@@ -43,16 +26,10 @@
                 <a class=" top-0 right-0 mt-3 mr-3" data-toggle="collapse" href="#search-open"><i class="fas fa-window-close"></i></a> </div>
         </div>
     </div>
-    <!-- End Search -->
-
-    <!-- Navbar top start-->
     <div class="navbar-top d-none d-lg-block">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
-                <!-- navbar top Left-->
                 <div class="d-flex align-items-center">
-                    <!-- Language -->
-                    <!-- Top info -->
                     <ul class="nav list-unstyled ml-3">
                         <li class="nav-item mr-3"> <a class="navbar-link" href="#"><strong>Phone:</strong> (024) 123-1457</a> </li>
                         <li class="nav-item mr-3"> <a class="navbar-link" href="#"><strong>Email:</strong> help@yaaritoronto.com</a> </li>

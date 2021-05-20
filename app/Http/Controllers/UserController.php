@@ -9,7 +9,13 @@ use App\dreams;
 use App\Event;
 use App\EventComment;
 use App\Eventview;
+use App\Forum;
+use App\ForumReplies;
+use App\ForumView;
 use App\Http\Controllers\Controller;
+use App\Movie;
+use App\MovieComment;
+use App\MovieView;
 use App\PaymentHistory;
 use App\UserLanguage;
 use Firebase\JWT\JWT;
@@ -37,14 +43,37 @@ class UserController extends Controller
     }
 
     public function home(){
-        $classifieds = Clasified::where('id','>',0)->orderBy('id', 'DESC')->limit(3)->get();
+        $classifieds = Clasified::where('id','>',0)->orderBy('id', 'DESC')->limit(5)->get();
         $events = Event::where('id','>',0)->orderBy('id', 'DESC')->limit(3)->get();
+        $movies = Movie::where('id','>',0)->orderBy('id', 'DESC')->limit(3)->get();
         $categories = Category::all();
-        return view('landing')->with(['classifieds' => $classifieds, 'events' => $events,'categories' => $categories]);
+        foreach ($categories as $category){
+            $category->count = Clasified::where('category', $category->name)->count();
+        }
+        return view('landing')->with(['classifieds' => $classifieds, 'events' => $events,'categories' => $categories, 'movies' => $movies]);
     }
 
     public function classified(){
         $classifieds = Clasified::where('id','>',0)->orderBy('id', 'DESC')->get();
+        foreach ($classifieds as $item){
+            $item->adViews = Adview::where('classified_id', $item->id)->count();
+            $item->comments = ClassifiedComment::where('classified_id', $item->id)->get();
+            $rating = 0;
+            $count = 0;
+            foreach ($item->comments as $comment){
+                if ((int)$comment->rating > 0){
+                    $rating = $rating + (int)$comment->rating;
+                    $count++;
+                }
+            }
+            if ($rating > 0){
+                $rating = $rating / $count;
+            }else{
+                $rating =  5;
+            }
+            $item->rating = round($rating, 1);
+            $item->reviews = $count;
+        }
         return view('classified')->with(['classifieds' => $classifieds]);
     }
 
@@ -90,16 +119,130 @@ class UserController extends Controller
         return view('event-details')->with(['event' => $event, 'adViewed' => $adViewed]);
     }
 
+    public function movieDetails($id){
+        $movie = Movie::where('id',$id)->first();
+        $movie->email = User::where('id', $movie->user_id)->first()['email'];
+        $movie->comments = MovieComment::where('movie_id', $movie->id)->get();
+
+        try {
+            if(!MovieView::where('ip', request()->ip())->where('useragent', request()->userAgent())->where('movie_id', $movie->id)->exists()){
+                $movieView = new MovieView();
+                $movieView->ip = request()->ip();
+                $movieView->useragent = request()->userAgent();
+                $movieView->movie_id = $movie->id;
+                $movieView->save();
+            }
+
+        }catch (\Exception $exception){
+
+        }
+        $adViewed = MovieView::where('movie_id', $movie->id)->count();
+        return view('movie-details')->with(['movie' => $movie, 'adViewed' => $adViewed]);
+    }
+
 
     public function classifiedByCategory($id){
         $category = Category::where('id', $id)->first()['name'];
         $classifieds = Clasified::where('category',$category)->orderBy('id', 'DESC')->get();
+        foreach ($classifieds as $item){
+            $item->adViews = Adview::where('classified_id', $item->id)->count();
+            $item->comments = ClassifiedComment::where('classified_id', $item->id)->get();
+            $rating = 0;
+            $count = 0;
+            foreach ($item->comments as $comment){
+                if ((int)$comment->rating > 0){
+                    $rating = $rating + (int)$comment->rating;
+                    $count++;
+                }
+            }
+            if ($rating > 0){
+                $rating = $rating / $count;
+            }else{
+                $rating =  5;
+            }
+            $item->rating = round($rating, 1);
+            $item->reviews = $count;
+        }
         return view('classified-by-category')->with(['classifieds' => $classifieds, 'category' => $category]);
     }
 
     public function events(){
         $events = Event::where('id','>',0)->orderBy('id', 'DESC')->get();
+        foreach ($events as $item){
+            $item->adViews = Eventview::where('event_id', $item->id)->count();
+            $item->comments = EventComment::where('event_id', $item->id)->get();
+            $rating = 0;
+            $count = 0;
+            foreach ($item->comments as $comment){
+                if ((int)$comment->rating > 0){
+                    $rating = $rating + (int)$comment->rating;
+                    $count++;
+                }
+            }
+            if ($rating > 0){
+                $rating = $rating / $count;
+            }else{
+                $rating =  5;
+            }
+            $item->rating = round($rating, 1);
+            $item->reviews = $count;
+        }
         return view('events')->with(['events' => $events]);
+    }
+
+    public function forum(){
+        $forum = Forum::where('id','>',0)->orderBy('id', 'DESC')->get();
+        foreach ($forum as $item){
+            $item->adViews = ForumView::where('forum_id', $item->id)->count();
+            $item->replies = ForumReplies::where('forum_id', $item->id)->count();
+            $item->user = User::where('id', $item->user_id)->first();
+        }
+        return view('forum')->with(['forum' => $forum]);
+    }
+
+    public function topic($id){
+        $forum = Forum::where('id',$id)->first();
+        $forum->user = User::where('id', $forum->user_id)->first();
+        $forum->replies = ForumReplies::where('forum_id', $forum->id)->get();
+
+        try {
+            if(!ForumView::where('ip', request()->ip())->where('useragent', request()->userAgent())->where('forum_id', $forum->id)->exists()){
+                $forumView = new ForumView();
+                $forumView->ip = request()->ip();
+                $forumView->useragent = request()->userAgent();
+                $forumView->forum_id = $forum->id;
+                $forumView->save();
+            }
+
+        }catch (\Exception $exception){
+
+        }
+        $adViewed = ForumView::where('forum_id', $forum->id)->count();
+        return view('forum-details')->with(['forum' => $forum, 'adViewed' => $adViewed]);
+    }
+
+    public function movies(){
+        $movies = Movie::where('id','>',0)->orderBy('id', 'DESC')->get();
+        foreach ($movies as $item){
+            $item->adViews = MovieView::where('movie_id', $item->id)->count();
+            $item->comments = MovieComment::where('movie_id', $item->id)->get();
+            $rating = 0;
+            $count = 0;
+            foreach ($item->comments as $comment){
+                if ((int)$comment->rating > 0){
+                    $rating = $rating + (int)$comment->rating;
+                    $count++;
+                }
+            }
+            if ($rating > 0){
+                $rating = $rating / $count;
+            }else{
+                $rating =  5;
+            }
+            $item->rating = round($rating, 1);
+            $item->reviews = $count;
+        }
+        return view('movies')->with(['movies' => $movies]);
     }
 
     public function sendEmail(Request $request){
